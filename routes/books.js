@@ -1,7 +1,5 @@
 const express = require('express')
 const router = express.Router()
-const path = require('path')
-const fs = require('fs')
 const Book = require('../models/book')
 const Author = require('../models/author')
 
@@ -60,10 +58,61 @@ router.post('/', async (req, res) => {
   }
 })
 
+// Show book
+router.get('/:id', async(req,res)=>{
+  
+  try{
+    const book = await Book.findById(req.params.id).populate('author').exec()
+    res.render('books/show',{book:book})
+  }catch(e){
+    console.error(e)
+    res.redirect('/')
+  }
 
+})
+// Edit Book
+router.get('/:id/edit', async (req,res)=>{
+  try{
+    const book = await Book.findById(req.params.id)
+    const author = await Author.find()
+    res.render('books/edit',{book:book, authors:author})
+  }catch(e){
+    console.log(e)
+    res.redirect('/books')
+  }
+})
+// update Book
+router.put('/:id',async(req,res)=>{
+  try{
+    const book = await Book.findById(req.params.id)
+    // book.title = req.params.title
+    // book.
+    book.title =  req.body.title,
+    book.author = req.body.author,
+    book.publishDate = new Date(req.body.publishDate),
+    book.pageCount = req.body.pageCount,
+    book.description = req.body.description
+    saveCover(book,req.body.cover)
+    await book.save()
+    res.redirect('/books')
+  }catch(e){
+    console.error(e)
+    res.redirect('/')
+  }
+})
+// delete Book
+router.delete('/:id', async (req,res) =>{
+  try{
+    const book = await book.findById(req.params.id)
+    await book.remove()
+  }catch(e){
+    console.error(e)
+    res.redirect('/books')
+  }
+})
 
 function saveCover(book,coverEncoded){
-  if (coverEncoded ==null) return
+  if (coverEncoded == null) return
   const cover = JSON.parse(coverEncoded)
   if(cover != null && imageMimeTypes.includes(cover.type)){
     book.coverImage = new Buffer.from(cover.data,'base64')
