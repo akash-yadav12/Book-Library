@@ -1,10 +1,13 @@
 <!-- <h1>Show Page</h1> -->
+<div class="form-row btn-row">
+    <a class="btn btn-primary" href="/authors/<%=author.id%>/edit">Edit</a>
+    <%- include('../partials/deleteForm.ejs', {url:`/authors/${author.id}`}) %>
+</div>
 <h2 class="page-header"><%=author.name%></h2>
-<a class="btn btn-primary" href="/authors/<%=author.id%>/edit">Edit</a>
-<%- include('../partials/deleteForm.ejs', {url:`/authors/${author.id}`}) %>
+
 
 <% if (booksByAuthor.length>0){ %>
-    <h2>Books by Author</h2>
+    <h2 class="page-header">Books by Author</h2>
     <div>
     <% booksByAuthor.forEach(book=>{ %>
         <a href="/books/<%=book.id%>">
